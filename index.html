@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz UD5 Respiratorio y Circulatorio</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f2f2f2; padding:15px; }
+h1 { text-align:center; }
+.card { background:#fff; padding:15px; border-radius:10px; margin-bottom:15px; }
+button {
+  width:100%; padding:12px; margin-top:8px;
+  font-size:16px; border:none; border-radius:8px;
+  background:#007aff; color:white;
+}
+button:active { background:#0051c7; }
+.result { text-align:center; font-size:22px; }
+</style>
+</head>
+
+<body>
+<h1>🫁❤️ Quiz UD5</h1>
+<div id="app"></div>
+
+<script>
+const POR_PARTIDA = 20;
+
+const preguntas = [
+{q:"Función principal del aparato respiratorio",o:["Captar oxígeno","Eliminar nutrientes","Regular la presión"],c:0},
+{q:"Unidad funcional del pulmón",o:["Bronquiolo","Alvéolo","Bronquio"],c:1},
+{q:"Conducto común a digestivo y respiratorio",o:["Laringe","Faringe","Tráquea"],c:1},
+{q:"Órgano de la fonación",o:["Faringe","Laringe","Nariz"],c:1},
+{q:"Cartílago que evita el paso de alimentos a la tráquea",o:["Cricoides","Epiglotis","Tiroides"],c:1},
+{q:"Estructuras que calientan y humidifican el aire",o:["Pulmones","Fosas nasales","Bronquios"],c:1},
+{q:"Punto de bifurcación de la tráquea",o:["Hilio","Carina","Pleura"],c:1},
+{q:"Conductos que penetran en los pulmones",o:["Bronquios","Bronquiolos","Alvéolos"],c:0},
+{q:"Lugar del intercambio gaseoso",o:["Bronquios","Alvéolos","Tráquea"],c:1},
+{q:"Músculo principal de la inspiración",o:["Intercostales","Diafragma","Abdominal"],c:1},
+{q:"Movimiento pasivo de la respiración",o:["Inspiración","Espiración","Ventilación"],c:1},
+{q:"Frecuencia respiratoria normal adulta",o:["8–12","14–20","20–30"],c:1},
+{q:"Transporte de gases en sangre",o:["Plasma","Hemoglobina","Leucocitos"],c:1},
+{q:"Proceso regulado por presiones parciales",o:["Ventilación","Difusión gaseosa","Respiración celular"],c:1},
+{q:"Proceso metabólico en mitocondrias",o:["Ventilación","Respiración celular","Difusión"],c:1},
+{q:"Sangre que llega a alvéolos",o:["Rica en O₂","Rica en CO₂","Sin gases"],c:1},
+{q:"Sangre que sale de alvéolos",o:["Rica en CO₂","Rica en O₂","Sin gases"],c:1},
+{q:"Centro regulador respiratorio",o:["Corteza","Tronco encefálico","Cerebelo"],c:1},
+{q:"Control respiratorio consciente",o:["Autónomo","Voluntario","Reflejo"],c:1},
+{q:"Control respiratorio involuntario",o:["Voluntario","Autónomo","Somático"],c:1},
+{q:"Función del moco respiratorio",o:["Oxigenar","Atrapar partículas","Producir voz"],c:1},
+{q:"Células que mueven el moco",o:["Epiteliales","Ciliadas","Musculares"],c:1},
+{q:"Cavidades que drenan en fosas nasales",o:["Senos paranasales","Alvéolos","Bronquios"],c:0},
+{q:"Lóbulos pulmón derecho",o:["2","3","4"],c:1},
+{q:"Membrana que recubre pulmones",o:["Peritoneo","Pleura","Endocardio"],c:1},
+
+{q:"Enfermedad respiratoria crónica por tabaco",o:["Asma","EPOC","Neumonía"],c:1},
+{q:"Destrucción de alvéolos",o:["Asma","Enfisema","Bronquitis"],c:1},
+{q:"Tos productiva crónica",o:["Asma","Bronquitis crónica","Neumonía"],c:1},
+{q:"Obstrucción reversible vías aéreas",o:["EPOC","Asma","Fibrosis"],c:1},
+{q:"Síntomas de crisis asmática",o:["Tos y disnea","Fiebre","Edema"],c:0},
+{q:"Definición insuficiencia respiratoria",o:["Fallo ventilatorio","Intercambio ineficaz","Dolor torácico"],c:1},
+{q:"PaO₂ que indica hipoxemia",o:["<80","<60","<40"],c:1},
+{q:"IR con PaCO₂ elevada",o:["Parcial","Hipercápnica","Crónica"],c:1},
+{q:"IR instaurada en horas",o:["Crónica","Aguda","Parcial"],c:1},
+{q:"Inflamación de la pleura",o:["Neumotórax","Pleuritis","Empiema"],c:1},
+{q:"Líquido en cavidad pleural",o:["Hemotórax","Derrame pleural","Neumotórax"],c:1},
+{q:"Aire en cavidad pleural",o:["Neumotórax","Hemotórax","Empiema"],c:0},
+{q:"Sangre en cavidad pleural",o:["Empiema","Hemotórax","Quilotórax"],c:1},
+{q:"Neumonía por inhalación de contenido gástrico",o:["Lobular","Por aspiración","Intersticial"],c:1},
+{q:"Neumonía que afecta bronquios y pulmones",o:["Lobular","Bronconeumonía","Intersticial"],c:1},
+{q:"Infección vírica respiratoria aguda",o:["Resfriado","Gripe","Neumonía"],c:1},
+{q:"Virus que infecta humanos y animales",o:["Influenza A","Influenza B","Influenza C"],c:0},
+{q:"Tumor pleural por amianto",o:["Mesotelioma","Carcinoma","Sarcoma"],c:0},
+{q:"Cáncer pulmonar más frecuente",o:["Adenocarcinoma","Escamoso","Células grandes"],c:0},
+
+{q:"Equipo que mide saturación O₂",o:["Capnógrafo","Pulsioxímetro","Respirador"],c:1},
+{q:"SpO₂ normal",o:["85–90%","90–94%","95–100%"],c:2},
+{q:"Equipo que mide CO₂ espirado",o:["Capnógrafo","Nebulizador","Respirador"],c:0},
+{q:"Equipo de ventilación mecánica",o:["Nebulizador","Respirador","Concentrador"],c:1},
+{q:"Equipo que genera aerosol",o:["Nebulizador","Capnógrafo","Respirador"],c:0},
+{q:"Equipo que obtiene O₂ del aire",o:["Botella","Concentrador","Respirador"],c:1},
+{q:"Parámetro del pulsioxímetro",o:["PaO₂","SpO₂","PaCO₂"],c:1},
+{q:"Uso principal del respirador",o:["Oxigenar","Ventilar","Humidificar"],c:1},
+{q:"Uso del nebulizador",o:["Ventilar","Administrar fármacos","Medir gases"],c:1},
+{q:"Uso del capnógrafo",o:["Medir O₂","Medir CO₂","Ventilar"],c:1},
+{q:"Oxigenoterapia domiciliaria",o:["Botella","Concentrador","Respirador"],c:1},
+{q:"Equipo UCI respiratoria",o:["Nebulizador","Respirador","Fonendo"],c:1},
+{q:"Parámetro medido en mmHg",o:["SpO₂","PaO₂","FC"],c:1},
+{q:"Monitorización respiratoria continua",o:["Capnografía","ECG","Holter"],c:0},
+{q:"Aparato para humidificar oxígeno",o:["Humidificador","Respirador","Capnógrafo"],c:0},
+
+{q:"Función aparato cardiovascular",o:["Eliminar toxinas","Transportar sangre","Regular respiración"],c:1},
+{q:"Localización del corazón",o:["Abdomen","Mediastino","Pulmón"],c:1},
+{q:"Capa externa del corazón",o:["Miocardio","Pericardio","Endocardio"],c:1},
+{q:"Capa muscular cardíaca",o:["Endocardio","Miocardio","Pericardio"],c:1},
+{q:"Capa interna del corazón",o:["Pericardio","Endocardio","Miocardio"],c:1},
+{q:"Número de cavidades cardíacas",o:["2","3","4"],c:2},
+{q:"Válvula AD–VD",o:["Mitral","Tricúspide","Pulmonar"],c:1},
+{q:"Válvula AI–VI",o:["Tricúspide","Mitral","Aórtica"],c:1},
+{q:"Válvulas semilunares",o:["Mitral y tricúspide","Aórtica y pulmonar","Cavas"],c:1},
+{q:"Arteria del ventrículo izquierdo",o:["Pulmonar","Aorta","Cava"],c:1},
+{q:"Arteria del ventrículo derecho",o:["Aorta","Pulmonar","Cava"],c:1},
+{q:"Marcapasos fisiológico",o:["Nodo AV","Nodo SA","Haz de His"],c:1},
+{q:"Fase de contracción cardíaca",o:["Diástole","Sístole","Reposo"],c:1},
+{q:"Fase de relajación cardíaca",o:["Sístole","Diástole","Bloqueo"],c:1},
+{q:"Definición de ciclo cardiaco",o:["Un latido","Una contracción","Sístole+diástole"],c:2},
+
+{q:"Vasos que salen del corazón",o:["Venas","Arterias","Capilares"],c:1},
+{q:"Vasos que llegan al corazón",o:["Arterias","Venas","Capilares"],c:1},
+{q:"Vasos de intercambio",o:["Arterias","Venas","Capilares"],c:2},
+{q:"Circulación sistémica",o:["Pulmones","Tejidos","Corazón"],c:1},
+{q:"Circulación pulmonar",o:["Oxigena sangre","Nutre tejidos","Drena linfa"],c:0},
+{q:"Vena de miembros inferiores",o:["Cava sup.","Cava inf.","Pulmonar"],c:1},
+{q:"Presión máxima cardiaca",o:["Diastólica","Sistólica","Media"],c:1},
+{q:"Presión mínima cardiaca",o:["Sistólica","Diastólica","Media"],c:1},
+{q:"TA normal",o:["90/60–120/80","100/50–140/95","140/90–160/100"],c:1},
+{q:"Hipertensión arterial",o:["TA baja","TA elevada mantenida","Arritmia"],c:1},
+{q:"Frecuencia cardiaca normal",o:["40–60","60–100","100–140"],c:1},
+{q:"FC >100 lpm",o:["Bradicardia","Taquicardia","Arritmia"],c:1},
+{q:"FC <60 lpm",o:["Taquicardia","Bradicardia","Isquemia"],c:1},
+{q:"Alteración del ritmo",o:["Isquemia","Arritmia","Estenosis"],c:1},
+{q:"Disminución riego coronario",o:["Infarto","Cardiopatía isquémica","Arritmia"],c:1},
+{q:"Muerte del miocardio",o:["Angina","Infarto","Arritmia"],c:1},
+{q:"Válvula que no abre bien",o:["Insuficiencia","Estenosis","Bloqueo"],c:1},
+{q:"Válvula que no cierra bien",o:["Estenosis","Insuficiencia","Isquemia"],c:1},
+{q:"Equipo ECG",o:["Holter","ECG","Desfibrilador"],c:1},
+{q:"Monitorización 24–48h",o:["ECG","Holter","Pulsioxímetro"],c:1},
+{q:"Equipo descarga eléctrica",o:["Marcapasos","Desfibrilador","ECG"],c:1},
+{q:"Equipo automático TA",o:["Fonendo","Esfigmomanómetro","ECG"],c:1},
+{q:"Pulso se mide en",o:["mmHg","lpm","%"],c:1},
+{q:"Placas de ateroma",o:["Trombosis","Arteriosclerosis","Embolia"],c:1},
+{q:"Formación de trombos y émbolos",o:["HTA","Enfermedad tromboembólica","Arritmia"],c:1}
+];
+
+let juego=[],i=0,ok=0;
+
+function iniciar(){
+  i=0; ok=0;
+  juego = preguntas.sort(()=>Math.random()-0.5).slice(0,POR_PARTIDA);
+  mostrar();
+}
+function mostrar(){
+  const app=document.getElementById("app");
+  if(i>=juego.length){
+    app.innerHTML=`<div class="card result">
+      <h2>Resultado</h2><p>${ok} / ${POR_PARTIDA}</p>
+      <button onclick="iniciar()">Nueva partida</button></div>`;
+    return;
+  }
+  let p=juego[i];
+  let h=`<div class="card"><h3>${i+1}. ${p.q}</h3>`;
+  p.o.forEach((op,j)=>h+=`<button onclick="responder(${j})">${op}</button>`);
+  app.innerHTML=h+"</div>";
+}
+function responder(r){ if(r===juego[i].c) ok++; i++; mostrar(); }
+iniciar();
+</script>
+</body>
+</html>
